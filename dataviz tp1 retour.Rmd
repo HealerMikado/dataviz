@@ -27,7 +27,7 @@ La visualisation repose sur la vision car c'est le sens le plus adapté comme su
 
 - parallélisation inconsciente
 - perception simultanée
-- zone cérébrales développé
+- zone cérébrales développée
 - possibilité technique
 
 
@@ -35,7 +35,7 @@ La visualisation repose sur la vision car c'est le sens le plus adapté comme su
 
 La visualisation se distingue du design, de la publicité ou de l'art par son intérêt pour l'efficacité de la représentation à communiquer une information ; nous ne poserons donc pas la question de savoir si un graphique est "joli" mais de s'il "fonctionne".
 
-Malheureusement définir l'efficacité c'est compliqué car elle dépend du but à atteindre. Il n'y a donc pas une solution magique. Cela demande de la réflexion et de la remise en question.
+Malheureusement définir l'efficacité est compliqué car elle dépend du but à atteindre. Il n'y a donc pas une solution magique. Cela demande de la réflexion et de la remise en question.
 
 Dans ce cours, nous nous intéresserons surtout à la tâche de comparer des grandeurs dans des graphiques finis, c'est-à-dire publiables. D'un côté parce que la comparaison est une tâche fondamentale (elle conditionne, par exemple, la découverte de régularités). De l'autre parce que c'est l'une de plus étudiées.
 
@@ -60,7 +60,7 @@ NUTS2_year
 
 Commençons par un exemple: l'évolution de la population en Champagne-Ardenne et en Picardie entre 1990 et 2015.
 
-```{r 1-1-graphique-basique, echo=TRUE}
+```{r, echo=FALSE}
 NUTS2_year %>%
   filter(nom %in% c('Champagne-Ardenne', 'Picardie')) %>%
   ggplot(aes(x=année, y=population)) +
@@ -70,7 +70,7 @@ NUTS2_year %>%
 **Exercice 1.1.2** Il est possible de superposer plusieurs couches graphiques. Pouvez-vous rajouter des étiquettes à chaque observation? Notez le nom de la fonction que vous avez utilisé.
 
 
-```{r}
+```{r, echo=FALSE}
  NUTS2_year %>%
    filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
    ggplot(aes(x=superficie, y=population)) +
@@ -81,7 +81,7 @@ NUTS2_year %>%
 
 **Solution :**
 
-```{r}
+```{r, echo=FALSE}
  NUTS2_year %>%
    filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
    ggplot(aes(x=superficie, y=population)) +
@@ -113,7 +113,7 @@ Le graphique Picardie—Champagne-Ardenne obtenu précédemment n'est pas satisf
 - Fond gris ?
 - Les labels des axes pas forcément utile 
 
-```{r}
+```{r, echo=FALSE}
 NUTS2_year %>%
   filter(nom %in% c('Champagne-Ardenne', 'Picardie')) %>%
   ggplot(aes(x=année, y=population, group=nom)) +
@@ -137,7 +137,7 @@ NUTS2_year %>%
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 NUTS2_year %>%
   # pour cette partie du code, voir exercice bonus A
   filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
@@ -168,7 +168,7 @@ NUTS2_year %>%
 ### Quelques exemples de thème
 
 
-```{r}
+```{r, echo=FALSE}
 plot <- NUTS2_year %>%
   # pour cette partie du code, voir exercice bonus A
   filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
@@ -209,7 +209,7 @@ plot + theme_void()
 
 Commentaire directement sur le code
 
-```{r}
+```{r, echo=FALSE}
  NUTS2_year %>%
    # pré-traitement
    filter(!str_detect(id_anc, '^TR')) %>% # suppression des données turques (expression régulière)
@@ -245,12 +245,12 @@ Commentaire directement sur le code
 
 **Exercice 2.1.6** La croissance démographique est-elle plus grande en île de France (`FR10`) ou à Rome (`ITI4`)?
 
-C'est chaud à lire ... Plusieurs raisons. Déjà il faut trouver les deux zones en question (classemement des flèched dans l'ordre alphabétique). Ensuite le diagramme nous propose 2 infos, la population et la croissance. Et cela cause un tassement sur les "croissances". Personnellement j'arrive globalement à dicerner 3 grands niveaux de croissance (6 si on compte positif/négatif), mais pas à comparer deux valeurs de niveau équivalent. Cette représentation est donc mauvaise  !
+C'est chaud à lire ... Plusieurs raisons. Déjà il faut trouver les deux zones en question (classemement des flèches dans l'ordre alphabétique). Ensuite le diagramme nous propose 2 infos, la population et la croissance. Et cela cause un tassement sur les "croissances". Personnellement j'arrive globalement à dicerner 3 grands niveaux de croissance (6 si on compte positif/négatif), mais pas à comparer deux valeurs de niveau équivalent. Cette représentation est donc mauvaise  !
 
 
-Colorez la flêche en fonction de si la croissance et positive ou négative.
+**EXO** Colorez la flêche en fonction de si la croissance et positive ou négative.
 
-```{r}
+```{r, echo=FALSE}
 NUTS2_year %>%
   filter(!str_detect(id_anc, '^TR')) %>%
   filter(année %in% c(2005, 2015)) %>%
@@ -281,12 +281,12 @@ NUTS2_year %>%
   )
 ```
 
- **Correction:** On va classer par origine pour lire la réponse. Mais bon, si le moyen le plus efficace pour comparer deux croissances (variable que l'on représente sur l'axe des ordonnées) est sa position sur l'axe des abscisses c'est qu'il y a un problème !!!!
+ **Correction:** On va classer par croissance pour lire la réponse. Mais bon, si le moyen le plus efficace pour comparer deux croissances (variable que l'on représente sur l'axe des ordonnées) est sa position sur l'axe des abscisses c'est qu'il y a un problème !!!!
  
 Pour une meilleure lecture je retire également des labels
  
  
-```{r}
+```{r, echo=FALSE}
  NUTS2_year %>%
    filter(!str_detect(id_anc, '^TR')) %>%
    filter(année %in% c(2005, 2015)) %>%
@@ -319,6 +319,7 @@ Pour une meilleure lecture je retire également des labels
      caption = "Source: Eurostat (niveau NUTS 2)"
    )
 ```
+
 ### 2.2 Position
 
 **Exercice 2.2.1** : j'ai également fait un peu de vide dans les labels
@@ -357,7 +358,7 @@ NUTS2_year %>%
 
 
 
-```{r}
+```{r, echo=FALSE}
 NUTS2_year %>%
   filter(année %in% c(2005, 2015)) %>%
   # calculer de la croissance démographique
@@ -388,7 +389,7 @@ NUTS2_year %>%
 
 Réorganisons tout cela !
 
-```{r}
+```{r, echo=FALSE}
 NUTS2_year %>%
  filter(année %in% c(2005, 2015)) %>%
  group_by(id_anc) %>% summarize(
@@ -418,7 +419,7 @@ NUTS2_year %>%
 
 Bon si le graphique était plus grand on arriverait sûrement à se prononcer, mais actuellement c'est chaud de savoir qui de Saxe-Anhalt ou de la Lettonie à plus plus grande perte de population. Pour répondre à la question je vais faire un peu de trie dans les données
 
-```{r}
+```{r, echo=FALSE}
 NUTS2_year %>%
  filter(année %in% c(2005, 2015)) %>%
  group_by(id_anc) %>% summarize(
@@ -542,7 +543,7 @@ NUTS2_year %>%
   scale_y_continuous(name=NULL, labels = number_plus) +
   theme_minimal() +
   labs(
-    title    = "Émilie-Romagne (Italie) et Stockholm (Suède)\ndans la couse démographique Européenne",
+    title    = "Émilie-Romagne (Italie) et Stockholm (Suède)\ndans la course démographique Européenne",
     subtitle = "Croissance de la population (2005-2015)",
     caption  = "Source: Eurostat (niveau NUTS 2)"
   )
@@ -550,17 +551,19 @@ NUTS2_year %>%
 
 Bon pareil on triche un peu car on utilise ici encore une fois l'ordre pour se prononcer, mais des 3 représentations présentée, celle ci est clairement la meilleure !
 
+
+Pour le fun je vous propose de rajouter un peu de couleur par pays. Mais ce n'est pas une bonne idée en fait ^^"
 ```{r eval=FALSE}
 NUTS2_year %>%
   filter(année %in% c(2005, 2015)) %>%
   group_by(id_anc) %>% summarize(
     croissance = population[order(année)] %>% {last(.)-first(.)}
   ) %>%
-  mutate(id_anc = reorder(id_anc, croissance)) %>% 
+  mutate(id_anc = reorder(id_anc, croissance)) %>%
   filter(!is.na(croissance), abs(croissance) > 100000) %>%
   ggplot(aes(x=id_anc, y=croissance)) +
   geom_col() +
-  geom_col(data=.%>% group_by(), fill='darkblue') +
+  geom_col( aes(fill = substr(id_anc,1,2))) +
   geom_text(
     aes(
       label = id_anc,
@@ -570,9 +573,10 @@ NUTS2_year %>%
     size=1.8, angle = 90) +
   scale_x_discrete(  name=NULL, breaks=NULL) +
   scale_y_continuous(name=NULL, labels = number_plus) +
+  scale_fill_discrete(name="code pays" ) +  
   theme_minimal() +
   labs(
-    title    = "Émilie-Romagne (Italie) et Stockholm (Suède)\ndans la couse démographique Européenne",
+    title    = "Émilie-Romagne (Italie) et Stockholm (Suède)\ndans la course démographique Européenne",
     subtitle = "Croissance de la population (2005-2015)",
     caption  = "Source: Eurostat (niveau NUTS 2)"
   )
