@@ -243,22 +243,25 @@ Commentaire directement sur le code
    )
 ```
 
+**Exercice 2.1.6** La croissance démographique est-elle plus grande en île de France (`FR10`) ou à Rome (`ITI4`)?
+
+C'est chaud à lire ... Plusieurs raisons. Déjà il faut trouver les deux zones en question (classemement des flèched dans l'ordre alphabétique). Ensuite le diagramme nous propose 2 infos, la population et la croissance. Et cela cause un tassement sur les "croissances". Personnellement j'arrive globalement à dicerner 3 grands niveaux de croissance (6 si on compte positif/négatif), mais pas à comparer deux valeurs de niveau équivalent. Cette représentation est donc mauvaise  !
+
+
 Colorez la flêche en fonction de si la croissance et positive ou négative.
 
 ```{r}
 NUTS2_year %>%
   filter(!str_detect(id_anc, '^TR')) %>%
   filter(année %in% c(2005, 2015)) %>%
-  # ---------------------------------------------------------------------- DÉBUT
   arrange(année) %>% 
   group_by(id_anc) %>% mutate(
     max      = max(population),
     increase = first(population)<last(population)
   ) %>% ungroup %>%
-  # ------------------------------------------------------------------------ FIN
   ggplot(aes(x=id_anc, y=population)) +
   geom_line(
-    aes(color=increase), # <---------------------------------------------------X
+    aes(color=increase), 
     arrow = arrow(length = unit(0.1, "cm"))
   ) +
   geom_text(
@@ -269,11 +272,308 @@ NUTS2_year %>%
   ) +
   scale_x_discrete(name=NULL, breaks=NULL) +
   scale_y_continuous(name=NULL, labels = scales:::number) +
-  guides(color=FALSE) + # <--------------------------- suppression de la légende
+  guides(color=FALSE) + # suppression de la légende
   theme_minimal() +
   labs(
     title    = "France, Espagne et Italie tirent la croisance démographique Européenne.",
     subtitle = "Croissance de la population (2005-2015)",
     caption = "Source: Eurostat (niveau NUTS 2)"
+  )
 ```
 
+ **Correction:** On va classer par origine pour lire la réponse. Mais bon, si le moyen le plus efficace pour comparer deux croissances (variable que l'on représente sur l'axe des ordonnées) est sa position sur l'axe des abscisses c'est qu'il y a un problème !!!!
+ 
+Pour une meilleure lecture je retire également des labels
+ 
+ 
+```{r}
+ NUTS2_year %>%
+   filter(!str_detect(id_anc, '^TR')) %>%
+   filter(année %in% c(2005, 2015)) %>%
+   arrange(année) %>%
+   group_by(id_anc) %>% mutate(
+     max      = max(population),
+     increase = first(population)<last(population)
+   ) %>% ungroup %>%
+   # passer par reorder() pour choisir l'ordre d'apparition des modalités
+   mutate(
+     # x_min    = reorder(id_anc, population, min),
+     # x_max    = reorder(id_anc, population, function(x) max(x)),
+     id_anc  = reorder(id_anc, population, function(x) last(x)-first(x))
+   ) %>%
+   ggplot(aes(x=id_anc, y=population)) +
+   geom_line(aes(color=increase), arrow = arrow(length = unit(0.1, "cm"))) +
+   geom_text(
+     data = . %>% group_by(id_anc) %>% slice(1) %>% filter (population > 3500000),
+     aes(y=max, label=id_anc),
+     size=2,
+     nudge_y=200000
+   ) +
+   scale_x_discrete(name=NULL, breaks=NULL) +
+   scale_y_continuous(name=NULL, labels = scales:::number) +
+   guides(color=FALSE) +
+   theme_minimal() +
+   labs(
+     title    = "France, Espagne et Italie tirent la croisance démographique Européenne.",
+     subtitle = "Croissance de la population (2005-2015)",
+     caption = "Source: Eurostat (niveau NUTS 2)"
+   )
+```
+### 2.2 Position
+
+**Exercice 2.2.1** : j'ai également fait un peu de vide dans les labels
+ 
+```{r, echo=FALSE}
+number_plus <- function(x) paste0(
+  ifelse(x>0, '+', '') ,
+  scales:::number(x)
+)
+
+NUTS2_year %>%
+  group_by(id_anc) %>% summarize(
+    croissance = population[année==2015]-population[année==2005]
+  ) %>%
+  filter(!is.na(croissance)) %>%
+  ggplot(aes(x=id_anc, y=croissance)) +
+  geom_point() +
+  geom_text(
+    data = . %>% group_by(id_anc) %>% filter (abs(croissance) > 250000),
+    aes(label = id_anc),
+    size=2, nudge_y=30000
+  ) +
+  scale_x_discrete(  name=NULL, breaks=NULL) +
+  scale_y_continuous(name=NULL, labels = number_plus) +
+  theme_minimal() +
+  labs(
+    title    = "France, Espagne et Italie tirent la croissance démographique Européenne.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+**Exercice 2.2.2** La perte démographique est-elle plus grande au Saxe-Anhalt (`DEE0`) ou en Lettonie (`LV00`)?
+
+¯\_(ツ)_/¯, mais comparer Paris et Rome c'est possible maintenant \o/
+
+
+
+```{r}
+NUTS2_year %>%
+  filter(année %in% c(2005, 2015)) %>%
+  # calculer de la croissance démographique
+  group_by(id_anc) %>% summarize(
+    croissance = population[année=='2015']-population[année=='2005']
+  ) %>%
+  # supprimer les valeurs manquantes
+  filter(!is.na(croissance)) %>%
+  # produire le graphique
+  ggplot(aes(x=id_anc, y=croissance)) +
+  geom_point() +
+  geom_text(
+    aes(label = id_anc),
+    size=2, nudge_y=30000
+  ) +
+  geom_point(data = . %>% filter(id_anc %in% c("DEE0", "LV00")), color='red') +
+  geom_point(data = . %>% filter(id_anc %in% c("FR10", "ITI4")), color='green') +
+  # simplifier la mise en page 
+  scale_x_discrete(  name=NULL, breaks=NULL) +
+  scale_y_continuous(name=NULL, labels = number_plus) +
+  theme_minimal() +
+  labs(
+    title    = "Saxe-Anhalt et Lettonie en régression démographique.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+Réorganisons tout cela !
+
+```{r}
+NUTS2_year %>%
+ filter(année %in% c(2005, 2015)) %>%
+ group_by(id_anc) %>% summarize(
+   croissance = population[année=='2015']-population[année=='2005']
+ ) %>%
+  #Réorganisation des données
+ mutate(id_anc = reorder(id_anc, croissance)) %>%
+ filter(!is.na(croissance)) %>%
+ ggplot(aes(x=id_anc, y=croissance)) +
+ geom_point() +
+ geom_point(data = . %>% filter(id_anc %in% c("DEE0", "LV00")), color='red') +
+ geom_point(data = . %>% filter(id_anc %in% c("FR10", "ITI4")), color='green') +
+# étiquettes en biais. C'est plus pour le "fun" car c'est toujours illisibles ...
+ geom_text(
+   aes(label = id_anc),
+   size=2, nudge_y=-5000, nudge_x=0.5, angle=-45, hjust=0
+ ) +
+ scale_x_discrete(  name=NULL, breaks=NULL) +
+ scale_y_continuous(name=NULL, labels = number_plus) +
+ theme_minimal() +
+ labs(
+   title    = "Saxe-Anhalt et Lettonie en régression démographique.",
+   subtitle = "Croissance de la population (2005-2015)",
+   caption  = "Source: Eurostat (niveau NUTS 2)"
+ )
+```
+
+Bon si le graphique était plus grand on arriverait sûrement à se prononcer, mais actuellement c'est chaud de savoir qui de Saxe-Anhalt ou de la Lettonie à plus plus grande perte de population. Pour répondre à la question je vais faire un peu de trie dans les données
+
+```{r}
+NUTS2_year %>%
+ filter(année %in% c(2005, 2015)) %>%
+ group_by(id_anc) %>% summarize(
+   croissance = population[année=='2015']-population[année=='2005']
+ ) %>%
+  #Réorganisation des données
+ mutate(id_anc = reorder(id_anc, croissance)) %>%
+ filter(!is.na(croissance), croissance < 0) %>%
+ ggplot(aes(x=id_anc, y=croissance)) +
+ geom_point() +
+ geom_point(data = . %>% filter(id_anc %in% c("DEE0", "LV00")), color='red') +
+ geom_point(data = . %>% filter(id_anc %in% c("FR10", "ITI4")), color='green') +
+# étiquettes en biais. C'est plus pour le "fun" car c'est toujours illisibles ...
+ geom_text(
+   aes(label = id_anc),
+   size=2, nudge_y=-5000, nudge_x=0.5, angle=-45, hjust=0
+ ) +
+ scale_x_discrete(  name=NULL, breaks=NULL) +
+ scale_y_continuous(name=NULL, labels = number_plus) +
+ theme_minimal() +
+ labs(
+   title    = "Saxe-Anhalt et Lettonie en régression démographique.",
+   subtitle = "Croissance de la population (2005-2015)",
+   caption  = "Source: Eurostat (niveau NUTS 2)"
+ )
+```
+Et voilà la réponse est que c'est la Lettonie qui a perdu le plus d'habitant
+
+### 2.3 Longueurs + position
+
+**Exercice 2.3.1** Changez une ligne du code de l'exercice 2.2.1 pour maintenant représenter la croissance démographiques à l'aide d'un diagramme en barres.
+
+- _Par soucis de lisibilité, vous pouvez également retirer les régions de croissance démographique proche de zéro._
+
+```{r, eval=FALSE}
+NUTS2_year %>%
+  filter(année %in% c(2005, 2015)) %>%
+  group_by(id_anc) %>% summarize(
+    croissance = population[order(année)] %>% {last(.)-first(.)}
+  ) %>%
+  filter(!is.na(croissance), abs(croissance) > 100000) %>% # <-- FILTRE CROIS.=0
+  ggplot(aes(x=id_anc, y=croissance)) +
+  geom_col() + # <------------------------------------------ DIAGRAMME EN BARRES
+  geom_text(
+    aes(
+      label = id_anc,
+    # V----------------------------------------------------- ÉTIQUETTES LISIBLES
+      y     = ifelse(croissance>0, -10000, 10000),
+      hjust = ifelse(croissance>0, 1, 0)
+    ),
+    size=1.8, angle = 90) +
+    # -------------------------------------------------------------------------X
+  scale_x_discrete(  name=NULL, breaks=NULL) +
+  scale_y_continuous(name=NULL, labels = number_plus) +
+  theme_minimal() +
+  labs(
+    title    = "France, Espagne et Italie tirent la croissance démographique Européenne.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+ Il faut utiliser `geom_col`, et non `geom_bar`. Car avec `geom_bar`, `ggplot2` suppose que l'utilisateur souhaite une sorte d'histogramme. `geom_bar` va donc tenter de compter le nombre de fois où `id_anc` apparaît dans les données pour passer ce nombre en ordonnées. Il est possible d'empêcher ce comportement avec l'option `stat='identity'`.
+ 
+ **Exercice 2.3.2** La croissance démographique est-elle plus grande en Émilie-Romagne (`ITH5`) ou à Stockholm `SE11`?
+
+Meh ¯\_(ツ)_/¯la croissance a l'air plus forte en Émilie-Romagne, mais c'est dur à dire à cause de la distance entre les barres.
+
+```{r, echo=FALSE}
+NUTS2_year %>%
+  filter(année %in% c(2005, 2015)) %>%
+  group_by(id_anc) %>% summarize(
+    croissance = population[order(année)] %>% {last(.)-first(.)}
+  ) %>%
+  filter(!is.na(croissance), abs(croissance) > 100000) %>%
+  ggplot(aes(x=id_anc, y=croissance)) +
+  geom_col() +
+  geom_col(data=.%>% filter(id_anc %in% c('SE11','ITH5')), fill='darkblue') +
+  geom_text(
+    aes(
+      label = id_anc,
+      y     = ifelse(croissance>0, -10000, 10000),
+      hjust = ifelse(croissance>0, 1, 0)
+    ),
+    size=1.8, angle = 90) +
+  scale_x_discrete(  name=NULL, breaks=NULL) +
+  scale_y_continuous(name=NULL, labels = number_plus) +
+  theme_minimal() +
+  labs(
+    title    = "Émilie-Romagne (Italie) et Stockholm (Suède)\ndans la couse démographique
+ropéenne",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+Un peu d'interactivité ici sera assez bien pour obtenir directement la différence de croissance. Et elle parait beaucoup plus naturelle ici (selon moi) que dans les digrammes précédents.
+
+**Exercice 2.3.3** Rajouter une ligne au code suivant pour réorganiser les barres par ordre croissant (ou décroissant). Est-il plus facile de répondre?
+
+
+```{r eval=FALSE}
+NUTS2_year %>%
+  filter(année %in% c(2005, 2015)) %>%
+  group_by(id_anc) %>% summarize(
+    croissance = population[order(année)] %>% {last(.)-first(.)}
+  ) %>%
+  mutate(id_anc = reorder(id_anc, croissance)) %>% 
+  filter(!is.na(croissance), abs(croissance) > 100000) %>%
+  ggplot(aes(x=id_anc, y=croissance)) +
+  geom_col() +
+  geom_col(data=.%>% filter(id_anc %in% c('SE11','ITH5')), fill='darkblue') +
+  geom_text(
+    aes(
+      label = id_anc,
+      y     = ifelse(croissance>0, -10000, 10000),
+      hjust = ifelse(croissance>0, 1, 0)
+    ),
+    size=1.8, angle = 90) +
+  scale_x_discrete(  name=NULL, breaks=NULL) +
+  scale_y_continuous(name=NULL, labels = number_plus) +
+  theme_minimal() +
+  labs(
+    title    = "Émilie-Romagne (Italie) et Stockholm (Suède)\ndans la couse démographique Européenne",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+Bon pareil on triche un peu car on utilise ici encore une fois l'ordre pour se prononcer, mais des 3 représentations présentée, celle ci est clairement la meilleure !
+
+```{r eval=FALSE}
+NUTS2_year %>%
+  filter(année %in% c(2005, 2015)) %>%
+  group_by(id_anc) %>% summarize(
+    croissance = population[order(année)] %>% {last(.)-first(.)}
+  ) %>%
+  mutate(id_anc = reorder(id_anc, croissance)) %>% 
+  filter(!is.na(croissance), abs(croissance) > 100000) %>%
+  ggplot(aes(x=id_anc, y=croissance)) +
+  geom_col() +
+  geom_col(data=.%>% group_by(), fill='darkblue') +
+  geom_text(
+    aes(
+      label = id_anc,
+      y     = ifelse(croissance>0, -10000, 10000),
+      hjust = ifelse(croissance>0, 1, 0)
+    ),
+    size=1.8, angle = 90) +
+  scale_x_discrete(  name=NULL, breaks=NULL) +
+  scale_y_continuous(name=NULL, labels = number_plus) +
+  theme_minimal() +
+  labs(
+    title    = "Émilie-Romagne (Italie) et Stockholm (Suède)\ndans la couse démographique Européenne",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
