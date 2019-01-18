@@ -16,7 +16,7 @@ output:
 version: élève
 ---
 
-```{r setup, echo=FALSE, warning = FALSE, message = FALSE}
+```{r setup, eval=FALSE, warning = FALSE, message = FALSE}
 library(tidyverse)
 knitr::opts_chunk$set(fig.width=8, out.width='100%', fig.height=4)
 ```
@@ -48,7 +48,7 @@ Rien n'est objectif dans ce monde, ne vous pensez pas au dessus de tout le monde
 
 Nous travaillerons avec des données Eurostat, principalement des données de population au niveau NUTS 2 (le découpage officiel statistique européeen, qui possède 3 niveaux). Le tableau de données `NUTS2_year` possède une ligne par région NUTS 2 et par année d'observation:
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 
 load('data/NUTS2_year.RData')
 NUTS2_year
@@ -60,7 +60,7 @@ NUTS2_year
 
 Commençons par un exemple: l'évolution de la population en Champagne-Ardenne et en Picardie entre 1990 et 2015.
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 NUTS2_year %>%
   filter(nom %in% c('Champagne-Ardenne', 'Picardie')) %>%
   ggplot(aes(x=année, y=population)) +
@@ -70,7 +70,7 @@ NUTS2_year %>%
 **Exercice 1.1.2** Il est possible de superposer plusieurs couches graphiques. Pouvez-vous rajouter des étiquettes à chaque observation? Notez le nom de la fonction que vous avez utilisé.
 
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
  NUTS2_year %>%
    filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
    ggplot(aes(x=superficie, y=population)) +
@@ -81,7 +81,7 @@ NUTS2_year %>%
 
 **Solution :**
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
  NUTS2_year %>%
    filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
    ggplot(aes(x=superficie, y=population)) +
@@ -113,7 +113,7 @@ Le graphique Picardie—Champagne-Ardenne obtenu précédemment n'est pas satisf
 - Fond gris ?
 - Les labels des axes pas forcément utile 
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 NUTS2_year %>%
   filter(nom %in% c('Champagne-Ardenne', 'Picardie')) %>%
   ggplot(aes(x=année, y=population, group=nom)) +
@@ -137,7 +137,7 @@ NUTS2_year %>%
 
 ```
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 NUTS2_year %>%
   # pour cette partie du code, voir exercice bonus A
   filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
@@ -168,7 +168,7 @@ NUTS2_year %>%
 ### Quelques exemples de thème
 
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 plot <- NUTS2_year %>%
   # pour cette partie du code, voir exercice bonus A
   filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
@@ -209,7 +209,7 @@ plot + theme_void()
 
 Commentaire directement sur le code
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
  NUTS2_year %>%
    # pré-traitement
    filter(!str_detect(id_anc, '^TR')) %>% # suppression des données turques (expression régulière)
@@ -250,7 +250,7 @@ C'est chaud à lire ... Plusieurs raisons. Déjà il faut trouver les deux zones
 
 **EXO** Colorez la flêche en fonction de si la croissance et positive ou négative.
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 NUTS2_year %>%
   filter(!str_detect(id_anc, '^TR')) %>%
   filter(année %in% c(2005, 2015)) %>%
@@ -286,7 +286,7 @@ NUTS2_year %>%
 Pour une meilleure lecture je retire également des labels
  
  
-```{r, echo=FALSE}
+```{r, eval=FALSE}
  NUTS2_year %>%
    filter(!str_detect(id_anc, '^TR')) %>%
    filter(année %in% c(2005, 2015)) %>%
@@ -324,7 +324,7 @@ Pour une meilleure lecture je retire également des labels
 
 **Exercice 2.2.1** : j'ai également fait un peu de vide dans les labels
  
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 number_plus <- function(x) paste0(
   ifelse(x>0, '+', '') ,
   scales:::number(x)
@@ -358,7 +358,7 @@ NUTS2_year %>%
 
 
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 NUTS2_year %>%
   filter(année %in% c(2005, 2015)) %>%
   # calculer de la croissance démographique
@@ -389,7 +389,7 @@ NUTS2_year %>%
 
 Réorganisons tout cela !
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 NUTS2_year %>%
  filter(année %in% c(2005, 2015)) %>%
  group_by(id_anc) %>% summarize(
@@ -419,7 +419,7 @@ NUTS2_year %>%
 
 Bon si le graphique était plus grand on arriverait sûrement à se prononcer, mais actuellement c'est chaud de savoir qui de Saxe-Anhalt ou de la Lettonie à plus plus grande perte de population. Pour répondre à la question je vais faire un peu de trie dans les données
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 NUTS2_year %>%
  filter(année %in% c(2005, 2015)) %>%
  group_by(id_anc) %>% summarize(
@@ -488,7 +488,7 @@ NUTS2_year %>%
 
 Meh ¯\_(ツ)_/¯la croissance a l'air plus forte en Émilie-Romagne, mais c'est dur à dire à cause de la distance entre les barres.
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 NUTS2_year %>%
   filter(année %in% c(2005, 2015)) %>%
   group_by(id_anc) %>% summarize(
