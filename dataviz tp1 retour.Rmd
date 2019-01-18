@@ -1,0 +1,279 @@
+---
+title: "Visualisation de données avec R — retour TP1"
+author: "Rémi Pépin (sur base de Arthur Katossky)"
+date: "Janvier 2019"
+output:
+  pdf_document:
+    toc: yes
+    latex_engine: xelatex
+    # keep_tex:  true
+    includes:
+      in_header: latex.sty
+  html_document:
+    toc: yes
+    toc_float: yes
+# à choisir entre 'professeur' et 'élève'
+version: élève
+---
+
+```{r setup, echo=FALSE, warning = FALSE, message = FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(fig.width=8, out.width='100%', fig.height=4)
+```
+
+### La visualisation de données, une représentation _visuelle_
+
+La visualisation repose sur la vision car c'est le sens le plus adapté comme support de mémoire externe:
+
+- parallélisation inconsciente
+- perception simultanée
+- zone cérébrales développé
+- possibilité technique
+
+
+### Une représentation _efficace_
+
+La visualisation se distingue du design, de la publicité ou de l'art par son intérêt pour l'efficacité de la représentation à communiquer une information ; nous ne poserons donc pas la question de savoir si un graphique est "joli" mais de s'il "fonctionne".
+
+Malheureusement définir l'efficacité c'est compliqué car elle dépend du but à atteindre. Il n'y a donc pas une solution magique. Cela demande de la réflexion et de la remise en question.
+
+Dans ce cours, nous nous intéresserons surtout à la tâche de comparer des grandeurs dans des graphiques finis, c'est-à-dire publiables. D'un côté parce que la comparaison est une tâche fondamentale (elle conditionne, par exemple, la découverte de régularités). De l'autre parce que c'est l'une de plus étudiées.
+
+
+### Une représentation subjective
+
+Rien n'est objectif dans ce monde, ne vous pensez pas au dessus de tout le monde. Utilisez votre subjectivité pour produire une représentation qui "claque" au lieu de la rendre lisse.
+
+### Les données
+
+Nous travaillerons avec des données Eurostat, principalement des données de population au niveau NUTS 2 (le découpage officiel statistique européeen, qui possède 3 niveaux). Le tableau de données `NUTS2_year` possède une ligne par région NUTS 2 et par année d'observation:
+
+```{r, echo=FALSE}
+
+load('data/NUTS2_year.RData')
+NUTS2_year
+```
+
+## 1. Faire un graphique avec `ggplot2` 
+
+### 1.1 Graphique basique
+
+Commençons par un exemple: l'évolution de la population en Champagne-Ardenne et en Picardie entre 1990 et 2015.
+
+```{r 1-1-graphique-basique, echo=TRUE}
+NUTS2_year %>%
+  filter(nom %in% c('Champagne-Ardenne', 'Picardie')) %>%
+  ggplot(aes(x=année, y=population)) +
+  geom_line(aes(group=nom))
+```
+
+**Exercice 1.1.2** Il est possible de superposer plusieurs couches graphiques. Pouvez-vous rajouter des étiquettes à chaque observation? Notez le nom de la fonction que vous avez utilisé.
+
+
+```{r}
+ NUTS2_year %>%
+   filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
+   ggplot(aes(x=superficie, y=population)) +
+   geom_point() +
+   geom_text(aes(label=id_anc))
+```
+**Problème de ce graph :** label sur les points, bouilli illisible vers l'origine
+
+**Solution :**
+
+```{r}
+ NUTS2_year %>%
+   filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
+   ggplot(aes(x=superficie, y=population)) +
+   geom_point() +
+   geom_text(
+     # Je ne conserve que les données dans les zones les moins denses.
+     data = . %>% filter(population>5000000 | superficie>50000),
+     aes(label=id_anc),
+     # Pour changer la taille du texte, pour des raisons arbitraires
+     # et indépendantes des données, je place le paramètre graphique
+     # **en dehors** de la fonction aes().
+     size=2,
+     # nudge_y permet de décaler le texte verticalement ;
+     # la valeur est donnée en unités réelles (ici des habitants)
+     nudge_y=400000
+   )
+```
+
+
+
+### 1.2 Options de présentation
+
+Le graphique Picardie—Champagne-Ardenne obtenu précédemment n'est pas satisfaisant:
+
+- OÙ EST LE TITRE ???!!!
+- C'EST QUOI LES LIGNES ???
+- ECRITURE SCIENTIFIQUE ???
+- ELLES VIENNENTS D'OÙ LES DONNEES ????
+- Fond gris ?
+- Les labels des axes pas forcément utile 
+
+```{r}
+NUTS2_year %>%
+  filter(nom %in% c('Champagne-Ardenne', 'Picardie')) %>%
+  ggplot(aes(x=année, y=population, group=nom)) +
+  geom_line() +
+  geom_text(
+    data = . %>% filter (année == 2017)
+    , aes(label=nom)
+    , nudge_y=50000)+
+  # changer le style de graphique
+  theme_minimal() +
+  # supprimer les titres des deux axes
+  # utiliser un format plus lisible sur l'axe des ordonnées
+  scale_x_continuous(name = NULL) +
+  scale_y_continuous(name = NULL, labels = scales:::number)  +
+  # ajouter titre et sous-titre
+  labs(
+    title    = "La Picardie se peuple pendant que\nla Champagne-Ardenne se dépeuple",
+    subtitle = "Population de 1990 à 2017", 
+    caption = "Source: Eurostat (niveau NUTS 2)"
+  )
+
+```
+
+```{r}
+NUTS2_year %>%
+  # pour cette partie du code, voir exercice bonus A
+  filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
+  ggplot(aes(x=superficie, y=population)) +
+  geom_point() +
+  geom_text(
+    data = . %>% filter(population>5000000 | superficie>50000),
+    aes(label=id_anc),
+    size=2,
+    nudge_y=400000
+  ) +
+  # utiliser un format plus naturel (les titres des axes peuvent être spécifiés ici...)
+  scale_x_continuous(name='Superficie (km²)', labels = scales:::number) +
+  scale_y_continuous(labels = scales:::number) +
+  # changer le style de graphique
+  theme_minimal() +
+  # ajouter titre, sous-titre...
+  labs(
+    y        = 'Population', # les titres des axes peuvent être spécifiés ici...
+    title    = "Istanbul (Turquie) surpeuplée, Oulu (Finlande) isolée",
+    subtitle = "Population et superficie en Europe (2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+> N'oubliez pas, un grahique doit véhiculer un message. Si vous n'arrivez pas à en trouver un alors le graphique est sûrement inutile !
+
+### Quelques exemples de thème
+
+
+```{r}
+plot <- NUTS2_year %>%
+  # pour cette partie du code, voir exercice bonus A
+  filter(année == 2015, !is.na(population), !is.na(superficie)) %>%
+  ggplot(aes(x=superficie, y=population)) +
+  geom_point() +
+  geom_text(
+    data = . %>% filter(population>5000000 | superficie>50000),
+    aes(label=id_anc),
+    size=2,
+    nudge_y=400000
+  ) +
+  # utiliser un format plus naturel (les titres des axes peuvent être spécifiés ici...)
+  scale_x_continuous(name='Superficie (km²)', labels = scales:::number) +
+  scale_y_continuous(labels = scales:::number) +
+  # changer le style de graphique
+  # ajouter titre, sous-titre...
+  labs(
+    y        = 'Population', # les titres des axes peuvent être spécifiés ici...
+    title    = "Istanbul (Turquie) surpeuplée, Oulu (Finlande) isolée",
+    subtitle = "Population et superficie en Europe (2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+
+plot + theme_dark()
+plot + theme_bw()
+plot + theme_minimal()
+plot + theme_gray()
+plot + theme_light()
+plot + theme_linedraw()
+plot + theme_test()
+plot + theme_void()
+```
+
+## 2. Représenter des données continues
+
+
+### 2.1 Longueurs
+
+Commentaire directement sur le code
+
+```{r}
+ NUTS2_year %>%
+   # pré-traitement
+   filter(!str_detect(id_anc, '^TR')) %>% # suppression des données turques (expression régulière)
+   filter(année %in% c(2005,2015), !is.na(population)) %>%
+   # graphique (cœur)
+   ggplot(aes(x=id_anc, y=population)) +
+   geom_line(arrow = arrow(length = unit(0.1, "cm"))) +
+   # ajouter des étiquettes
+   geom_text(
+     # Si je ne change pas les données en entrée, chaque étiquette est imprimée
+     # pour chaque observations, soit deux fois pour chaque région (2005 et 2015).
+     # Je décide de ne retenir pour chaque region NUTS 2 que la plus grande
+     # population atteinte, de façon à que ce que l'étiquette soit toujours
+     # au-dessus de la flèche.
+     data = . %>%
+       group_by(id_anc) %>%
+       summarise(population=max(population)),
+     aes(label=id_anc),
+     size=2, # diminuer la taille de la police sans référence aux données
+     nudge_y=200000 # écarter le label des flèches
+   ) +
+   # graphique (mise en page)
+   scale_x_discrete(name=NULL, breaks=NULL) + # break les identifiants NUTS 2 n'étant pas des grandeurs continues, `ggplot2` imprime par défaut autant de ligne que de valeurs, ce qui vu le nombre d'identifiants n'aide en rien la lecture. Faites le test
+#  scale_x_discrete(name=NULL) + 
+   scale_y_continuous(name=NULL, labels = scales:::number) +
+   theme_minimal() +
+   labs(
+     title    = "France, Espagne et Italie tirent la croisance démographique Européenne.",
+     subtitle = "Croissance de la population (2005-2015)",
+     caption = "Source: Eurostat (niveau NUTS 2)"
+   )
+```
+
+Colorez la flêche en fonction de si la croissance et positive ou négative.
+
+```{r}
+NUTS2_year %>%
+  filter(!str_detect(id_anc, '^TR')) %>%
+  filter(année %in% c(2005, 2015)) %>%
+  # ---------------------------------------------------------------------- DÉBUT
+  arrange(année) %>% 
+  group_by(id_anc) %>% mutate(
+    max      = max(population),
+    increase = first(population)<last(population)
+  ) %>% ungroup %>%
+  # ------------------------------------------------------------------------ FIN
+  ggplot(aes(x=id_anc, y=population)) +
+  geom_line(
+    aes(color=increase), # <---------------------------------------------------X
+    arrow = arrow(length = unit(0.1, "cm"))
+  ) +
+  geom_text(
+    data = . %>% group_by(id_anc) %>% slice(1),
+    aes(y=max, label=id_anc),
+    size=2,        # diminuer la taille de la police
+    nudge_y=200000 # écarter l'étiquette de l'extrémité de la flêche
+  ) +
+  scale_x_discrete(name=NULL, breaks=NULL) +
+  scale_y_continuous(name=NULL, labels = scales:::number) +
+  guides(color=FALSE) + # <--------------------------- suppression de la légende
+  theme_minimal() +
+  labs(
+    title    = "France, Espagne et Italie tirent la croisance démographique Européenne.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption = "Source: Eurostat (niveau NUTS 2)"
+```
+
