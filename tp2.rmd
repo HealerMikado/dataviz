@@ -275,3 +275,88 @@ NUTS2_year %>%
     caption  = "Source: Eurostat (niveau NUTS 2)"
   )
 ```
+
+**BILAN:** angle non alignés < angles alignés et pentes < longueur
+ l'oeil détecte correctement des segments à peu près parallèles, et également des écarts par rapport à 45˚
+
+### 2.6 Couleurs
+
+```{r, echo=FALSE}
+NUTS2_year %>%
+  # pré-traitement
+  filter(!is.na(population) & !is.na(population_0_19)) %>%
+  filter(id_anc %in% sample(unique(id_anc), size = 30)) %>% # récupération 30 id_anc au hasard
+  # graphique (cœur)
+  ggplot(aes(y=id_anc, x=année)) +
+  geom_point(aes(fill=population_0_19/population), size=3, shape=22, stroke=0.2) + # taille des points, forme et bordure
+  # gaphique (mise en page)
+  scale_y_discrete(name=NULL)+
+  scale_x_continuous(
+    name=NULL,
+    breaks=seq(1990,2020,5),
+    minor_breaks = NULL
+  ) +
+  scale_fill_continuous( #échelle de couleur continue
+    name = NULL,
+    type = 'viridis',
+    labels = scales:::percent_format(accuracy=1) #précision de l'échelle
+  ) +
+  coord_equal() +
+  theme_minimal() +
+  labs(
+    title    = "De moins en moins de jeunes en Europe.",
+    subtitle = 'Part des moins de 20 ans dans la population.',
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+```{r}
+tibble(
+  x = rep(1:5, times=5),
+  y = rep(1:5, each =5),
+  s = 0:24
+) %>%
+  ggplot(aes(x=x, y=y, shape=s))+
+  geom_point(fill='red', size=4)+
+  geom_text(aes(label=s), nudge_y = 0.3) +
+  scale_shape_identity()+
+  coord_equal() +
+  theme_void()
+```
+**Exercice 2.6.4:** Avec quelle précision est-il possible d'identifier une région européenne avec 20% de chômage? À quel point est-il facile de comparer deux régions entre elles?
+
+Assez difficilement. 
+
+```{r, echo=FALSE}
+NUTS2_year %>%
+  # pré-traitement
+  filter(!is.na(population) & !is.na(population_0_19)) %>%
+  filter(id_anc %in% sample(unique(id_anc), size = 30)) %>% # récupération 30 id_anc au hasard
+  # graphique (cœur)
+  ggplot(aes(y=id_anc, x=année)) +
+  geom_point(aes(fill=population_0_19/population), size=3, shape=22, stroke=0.2) + # taille des points, forme et bordure
+  # gaphique (mise en page)
+  scale_y_discrete(name=NULL)+
+  scale_x_continuous(
+    name=NULL,
+    breaks=seq(1990,2020,5),
+    minor_breaks = NULL
+  ) +
+  scale_fill_continuous( #échelle de couleur continue
+    name = NULL,
+    low='#ff9999', high='#000099',
+    labels = scales:::percent_format(accuracy=1) #précision de l'échelle
+  ) +
+  coord_equal() +
+  theme_minimal() +
+  labs(
+    title    = "De moins en moins de jeunes en Europe.",
+    subtitle = 'Part des moins de 20 ans dans la population.',
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+**BILAN**
+
+- les couleurs ne sont pas optimales pour représenter des variable numériques (on y a recourt que lorsque l'espace est déjà utilisé pour représenter une autre information, par exemple un positionnement géographique)
+- l'oeil humain ne peut pas distinguer de nombreuses teintes différentes
+- l'avantage principal de la couleur est la densité d'information représentée, potentiellement 1 variable par pixel!
