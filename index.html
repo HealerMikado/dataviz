@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Dataviz</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/mine.css">
+	<link rel="stylesheet" href="css/theme/black.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css'
+			: 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h1>Visualisation des données </h1>
+				<h2>Retour TP 1 + TP2</h2>
+			</section>
+			<section>
+				<section>
+					<h2>Previously</h2>
+				</section>
+				<section>
+					<h3>Pourquoi la visualition des données</h3>
+					<ul>
+						<li>parallélisation</li>
+						<li>simultanéité</li>
+						<li>possibilité technique</li>
+					</ul>
+
+				</section>
+
+				<section>
+					<h3>Une bonne visualition</h3>
+					<ul>
+						<li>Efficace (!= jolie)</li>
+						<li>Transmet un message (titre please)</li>
+						<li>Sobre</li>
+					</ul>
+
+				</section>
+
+				<section>
+					<h3>Comment faire un graphique avec ggplot</h3>
+					<ul>
+						<li>ggplot(aes(variables à utiliser))</li>
+						<li>geom_something() : _text(), _point(), _line() </li>
+						<li>theme_something() : _minimal de préférence</li>
+						<li>labs(title, subtitle, caption)</li>
+					</ul>
+
+				</section>
+
+				<section>
+					<h3>Hierarchisation dans les représentations variable quanti continues</h3>
+
+					<ol>
+						<li>Position</li>
+						<li>Longueur</li>
+						<li>Superficie (spoiler alert)</li>
+					</ol>
+				</section>
+
+			</section>
+			<section>
+				<section>
+					<h1>
+						Et maintenant
+					</h1>
+				</section>
+
+				<section>
+						<h3>Au menu</h3>
+						<ul>
+							<li>Les angles (DON'T DO THAT)</li>
+							<li>Les pentes</li>
+							<li>Les couleurs 'continues' (avec modération)</li>
+							<li>Les superficies</li>
+							<li>Les émojis (#marketing #pleaseDont)</li>
+							<li>Les couleurs 'categorielles'</li>
+							<li>Regrouper/relier/encadrer</li>
+						</ul>
+					</section>
+
+			</section>
+
+		</div>
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			dependencies: [{
+				src: 'plugin/markdown/marked.js'
+			}, {
+				src: 'plugin/markdown/markdown.js'
+			}, {
+				src: 'plugin/notes/notes.js',
+				async: true
+			}, {
+				src: 'plugin/highlight/highlight.js',
+				async: true,
+				callback: function () {
+					hljs.initHighlightingOnLoad();
+				}
+			}],
+			// Display the page number of the current slide
+			slideNumber: true,
+
+			// Push each slide change to the browser history
+			history: true,
+
+			// Enable slide navigation via mouse wheel
+			mouseWheel: true,
+		});
+	</script>
+</body>
+
+</html>
