@@ -1,0 +1,277 @@
+---
+title: "TP2"
+author: "Remi Pépin"
+date: "23/01/2019"
+output: html_document
+---
+
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+### 2.4 Angles
+
+Le graphique ci-dessous repésente la part des moins de 20 ans dans la population de quelques régions européennes sélectionnées au hasard.
+
+```{r, echo=FALSE}
+NUTS2_year %>%
+  filter(!is.na(population), !is.na(population_0_19)) %>%
+  filter(id_anc %in% sample(unique(id_anc), size = 10)) %>% # on tire uniquement 10 régions
+  mutate(angle_seed = runif(n(), 0, 2*pi)) %>% # pour le fun on met un angle de départ (DON'T DO THAT !!!!!)
+  # graphique (cœur)
+  ggplot(aes(y=id_anc, x=année)) +
+  
+  geom_spoke(aes(angle=angle_seed), radius=0.5) + # base de notre angle
+  geom_spoke(aes(angle=angle_seed+2*pi*population_0_19/population), radius=0.5) + # second trait
+  
+  # graphique (mise en page)
+  scale_y_discrete(name=NULL)+
+  scale_x_continuous(name=NULL, breaks=seq(1990,2020,5), minor_breaks = NULL) +
+  theme_minimal() +
+  coord_fixed() + #fixe le ratio des unités, par défaut 1 (id_anc discrète donc ratio 1 ?)
+  labs(
+    title    = "Les jeunes, fans d'art abstrait?",
+    subtitle = 'Part des moins de 20 ans dans la population',
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+```{r}
+?coord_equal()
+```
+
+**Exercice 2.4.3:** Est-ce facile de comparer différentes zones à différents moments dans le temps? Arrives-tu à repérer une zone NUTS avec plus de 30% de moins de 20 ans?
+
+Non ! iyu laus c'est compliqué
+
+**Exercice 2.4.4:**
+```{r, echo=FALSE}
+NUTS2_year %>%
+  filter(!is.na(population), !is.na(population_0_19)) %>%
+  filter(id_anc %in% sample(unique(id_anc), size = 10)) %>% # on tire uniquement 10 régions
+  mutate(angle_seed = 0) %>% # pour le fun on met un angle de départ (DON'T DO THAT !!!!!)
+  # graphique (cœur)
+  ggplot(aes(y=id_anc, x=année)) +
+  
+  geom_spoke(aes(angle=angle_seed), radius=0.5) + # base de notre angle
+  geom_spoke(aes(angle=angle_seed+2*pi*population_0_19/population), radius=0.5) + # second trait
+  
+  # graphique (mise en page)
+  scale_y_discrete(name=NULL)+
+  scale_x_continuous(name=NULL, breaks=seq(1990,2020,5), minor_breaks = NULL) +
+  theme_minimal() +
+  coord_fixed() + #fixe le ratio des unités, par défaut 1 (id_anc discrète donc ratio 1 ?)
+  labs(
+    title    = "Les jeunes, fans d'art abstrait?",
+    subtitle = 'Part des moins de 20 ans dans la population',
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+```{r, echo=FALSE}
+NUTS2_year %>%
+  filter(année %in% c(2005, 2015), id_anc %in% c(
+    'ITC4', 'FR10', 'ES30', 'FR71', 'ES51', 'ES61', 'PL12', 'ITF3',
+    'FI20', 'PT15', 'AT33', 'DE73', 'PL62', 'DE93', 'LV00',
+    'UKJ1', 'LT00', 'ITC1'
+  )) %>%
+  ggplot(aes(y=population, x=année, group=id_anc, label=id_anc)) +
+  geom_line() +
+  geom_text(
+    data    = .%>% filter(année==2015), # Sans on va avoir 10 labels,
+    size    = 2, hjust=0,
+    nudge_x = 0.1 # décalage sur l'axe des X
+  ) +
+  # graphique (mise en page)
+  scale_y_continuous(name=NULL, labels=scales:::number)+
+  scale_x_continuous(
+    name=NULL,
+    breaks=c(2005L, 2015L), # on veux seulement un séparateur de date au début et à la fin
+    minor_breaks = NULL, # retire les demi séparateur
+    labels=scales:::number_format(big.mark = ''), #pas de virgule
+    position = "top" # échelle en haut
+  ) +
+  theme_minimal() +
+  labs(
+    title    = "France, Espagne et Italie tirent la croisance démographique Européenne.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+
+
+NUTS2_year %>%
+  filter(année %in% c(2005, 2015), id_anc %in% c(
+    'ITC4', 'FR10', 'ES30', 'FR71', 'ES51', 'ES61', 'PL12', 'ITF3',
+    'FI20', 'PT15', 'AT33', 'DE73', 'PL62', 'DE93', 'LV00',
+    'UKJ1', 'LT00', 'ITC1'
+  )) %>%
+  ggplot(aes(y=population, x=année, group=id_anc, label=id_anc)) +
+  geom_line() +
+  geom_text(
+    data    = .%>% filter(année==2015), # Sans on va avoir 10 labels,
+    size    = 2, hjust=0,
+    nudge_x = 0.1 # décalage sur l'axe des X
+  ) +
+  # graphique (mise en page)
+  scale_y_continuous(name=NULL, labels=scales:::number)+
+  scale_x_continuous(
+    name=NULL,
+    #breaks=c(2005L, 2015L), # on veux seulement un séparateur de date au début et à la fin
+    #minor_breaks = NULL, # retire les demi séparateur
+    #labels=scales:::number_format(big.mark = ''),
+    position = "top" # échelle en haut
+  ) +
+  theme_minimal() +
+  labs(
+    title    = "France, Espagne et Italie tirent la croisance démographique Européenne.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+**Exercice 2.5.1:**  Voici la trame du code utilisé pour produire le graphique. À quoi correspondent les parties numérotées? Pourquoi est-ce important de **ne pas** utiliser `coord_equal()`?
+
+Car les années et la population sont des ordres de grandeur trop différents !
+
+**Exercice 2.5.3:** Arrivez-vous à repérer des NUTS avec des croissances de population comparable? Modifiez le code de la question 1.3 pour que la pente des droites soient plus prononcées. Est-ce plus facile de comparer plusieurs les zones NUTS entre elles?
+
+Les zones avec des croissance similaire ont des pentes comparables. On voit clairement les
+croissance vs. décroissance de population. Plus le pente est forte (jusqu’à autour de 45˚), plus
+la lecture est facile. On lit en même temps la pente, le rang et le niveau absolu, c’est très fort!
+Ce type de graphique est très efficace.
+
+Pour trouver le bon ratio une phase d'essais-erreurs me semble bien :)
+
+```{r}
+NUTS2_year %>%
+  filter(année %in% c(2005, 2015), id_anc %in% c(
+    'ITC4', 'FR10', 'ES30', 'FR71', 'ES51', 'ES61', 'PL12', 'ITF3',
+    'FI20', 'PT15', 'AT33', 'DE73', 'PL62', 'DE93', 'LV00',
+    'UKJ1', 'LT00', 'ITC1'
+  )) %>%
+  ggplot(aes(y=population, x=année, group=id_anc, label=id_anc)) +
+  geom_line() +
+  geom_text(
+    data    = .%>% filter(année==2015), # Sans on va avoir 10 labels,
+    size    = 2, hjust=0,
+    nudge_x = 0.1 # décalage sur l'axe des X
+  ) +
+  # graphique (mise en page)
+  scale_y_continuous(name=NULL, labels=scales:::number)+
+  scale_x_continuous(
+    name=NULL,
+    breaks=c(2005L, 2015L), # on veux seulement un séparateur de date au début et à la fin
+    minor_breaks = NULL, # retire les demi séparateur
+    labels=scales:::number_format(big.mark = ''), #pas de virgule
+    position = "top" # échelle en haut
+  ) +
+  theme_minimal() +
+  coord_fixed(ratio=20/10000000, xlim=c(2005, 2017)) +
+  labs(
+    title    = "France, Espagne et Italie tirent la croisance démographique Européenne.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+**En attendant...** Modifiez le code précédent en optant pour une base 0 en 2005. Est-ce plus facile de comparer plusieurs zones? Pour quelle raison à votre avis?
+
+```{r}
+number_plus <- function(x) paste0(
+  ifelse(x>0, '+', '') ,
+  scales:::number(x)
+)
+NUTS2_year %>%
+  # pré-traitement
+  filter(année %in% c(2005, 2015), id_anc %in% c(
+    'ITC4', 'FR10', 'ES30', 'FR71', 'ES51', 'ES61', 'PL12', 'ITF3',
+    'FI20', 'PT15', 'AT33', 'DE73', 'PL62', 'DE93', 'LV00',
+    'UKJ1', 'LT00', 'ITC1'
+  )) %>%
+  # ---------------------------------------------------------------------- DÉBUT
+  arrange(année) %>%
+  group_by(id_anc) %>% mutate(croissance = population-first(population)) %>% ungroup %>%
+  # On retranche à chaque pop sa pop initiale
+  # ------------------------------------------------------------------------ FIN
+  # graphique (cœur)
+  ggplot(aes(y=croissance, x=année, group=id_anc, label=id_anc)) + # <---------X
+  geom_line() +
+  geom_text(
+    data    = .%>% filter(année==2015),
+    size    = 2, hjust=0,
+    nudge_x = 0.1
+  ) +
+  # graphique (mise en page)
+  scale_y_continuous(name=NULL, labels=number_plus)+ # <-----------------------X
+  scale_x_continuous(
+    name=NULL,
+    breaks=c(2005L, 2015L),
+    minor_breaks = NULL,
+    labels=scales:::number_format(big.mark = ''),
+    position = "top"
+  ) +
+  theme_minimal() +
+  coord_fixed(ratio=150/10000000, xlim=c(2005, 2016)) + # <---------------------X
+  labs(
+    title    = "France, Espagne et Italie\ntirent la croisance démographique Européenne.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+Ce diagramme est plus efficace pour comparer les variations, car à > la pente, s'ajouter maintenant la position sur l'axe des ordonnées. En revanche, il est désormais impossible de comparer les niveaux de population.
+
+**En attendant...** Ajoutez des couleurs pour aider à distinguer les lignes voisines! Avec trois ou quatre couleurs seulement, cela aide déja beaucoup.
+
+```{r}
+number_plus <- function(x) paste0(
+  ifelse(x>0, '+', '') ,
+  scales:::number(x)
+)
+
+get_group_number = function(){
+    i = 0
+    function(){
+        i <<- i+1
+        i
+    }
+}
+group_number =get_group_number()
+NUTS2_year %>%
+  # pré-traitement
+  filter(année %in% c(2005, 2015), id_anc %in% c(
+    'ITC4', 'FR10', 'ES30', 'FR71', 'ES51', 'ES61', 'PL12', 'ITF3',
+    'FI20', 'PT15', 'AT33', 'DE73', 'PL62', 'DE93', 'LV00',
+    'UKJ1', 'LT00', 'ITC1'
+  )) %>%
+  # ---------------------------------------------------------------------- DÉBUT
+  arrange(année) %>%
+  group_by(id_anc) %>% mutate(croissance = population-first(population)
+                              , color_id= toString(group_number()%%4) # pour avoir 4 couleurs
+                              ) %>% ungroup %>%
+  # On retranche à chaque pop sa pop initiale
+  # ------------------------------------------------------------------------ FIN
+  # graphique (cœur)
+  ggplot(aes(y=croissance, x=année, group=id_anc, label=id_anc, color=color_id)) + # <---------X
+  scale_color_manual(values=c("#660066","#009933","#ff6600", "#000099")) +
+  geom_line() +
+  geom_text(
+    data    = .%>% filter(année==2015),
+    size    = 2, hjust=0,
+    nudge_x = 0.1
+  ) +
+  # graphique (mise en page)
+  scale_y_continuous(name=NULL, labels=number_plus)+ # <-----------------------X
+  scale_x_continuous(
+    name=NULL,
+    breaks=c(2005L, 2015L),
+    minor_breaks = NULL,
+    labels=scales:::number_format(big.mark = ''),
+    position = "top"
+  ) +
+  guides(color=FALSE)+
+  theme_minimal() +
+  coord_fixed(ratio=150/10000000, xlim=c(2005, 2016)) + # <---------------------X
+  labs(
+    title    = "France, Espagne et Italie\ntirent la croisance démographique Européenne.",
+    subtitle = "Croissance de la population (2005-2015)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
