@@ -7,6 +7,8 @@ output: html_document
 
 ```{r}
 install.packages("tidyverse")
+install.packages("emojifont")
+install.packages("ggimage")
 library(tidyverse)
 ```
 
@@ -244,7 +246,7 @@ NUTS2_year %>%
   # ---------------------------------------------------------------------- DÉBUT
   arrange(année) %>%
   group_by(id_anc) %>% mutate(croissance = population-first(population)
-                              , color_id= toString(group_number()%%4) # pour avoir 4 couleurs
+                               , color_id= toString(group_number()%%4) # pour avoir 4 couleurs
                               ) %>% ungroup %>%
   # On retranche à chaque pop sa pop initiale
   # ------------------------------------------------------------------------ FIN
@@ -266,7 +268,7 @@ NUTS2_year %>%
     labels=scales:::number_format(big.mark = ''),
     position = "top"
   ) +
-  guides(color=FALSE)+
+  # guides(color=FALSE)+
   theme_minimal() +
   coord_fixed(ratio=150/10000000, xlim=c(2005, 2016)) + # <---------------------X
   labs(
@@ -360,3 +362,188 @@ NUTS2_year %>%
 - les couleurs ne sont pas optimales pour représenter des variable numériques (on y a recourt que lorsque l'espace est déjà utilisé pour représenter une autre information, par exemple un positionnement géographique)
 - l'oeil humain ne peut pas distinguer de nombreuses teintes différentes
 - l'avantage principal de la couleur est la densité d'information représentée, potentiellement 1 variable par pixel!
+
+### 2.7 Superficie
+
+```{r, echo=FALSE}
+NUTS2_year %>%
+  # pré-traitement
+  arrange(id_anc) %>%
+  filter(année==2015, !is.na(population)) %>%
+  mutate(
+    y = -(1:n()) %/% 30,   # Permet de positionner le cercle dans un tableau invisible
+    x = 0:(n()-1) %%  30  
+  ) %>% 
+  # (-) 1 2 3 4 5 6 7 8 9 10 .................. n()
+  #     0 1 2 3 4 5 6 7 8 9  .................. n()-1
+  # y(-)0 0 0 0 0 0 0 0 0 0 ... 1  .... 2
+  # x   0 1 2 3 4 5 6 7 8 9 .29 0 ...29 0 
+  
+  # graphique (cœur)
+  ggplot(aes(y=y, x=x, label=id_anc, size=population)) +
+  geom_point(shape=21) +
+  geom_point(
+    data = . %>% filter(id_anc %in% c('ITC1', 'ITH3')), # on colorie ces points
+    shape=21, # forme 
+    fill='red',
+    show.legend = FALSE  # pas de légende
+  ) +
+  geom_text(size=1.5) +
+  # graphique (mise en page)
+  scale_y_discrete(name=NULL, breaks=NULL)+
+  scale_x_continuous(name=NULL, breaks = NULL ) +
+  scale_size_area(labels=scales:::number, max_size = 15) +
+  theme_minimal() +
+  coord_equal() + # échelle identique
+  labs(
+    size     = "Population",
+    title    = "Disparité des maillages administratifs en Europe",
+    subtitle = 'Population des régions NUTS 2 (2015)',
+    caption  = "Source: Eurostat"
+  )
+```
+
+```{r, echo=FALSE}
+NUTS2_year %>%
+  # pré-traitement
+  arrange(id_anc) %>%
+  filter(année==2015, !is.na(population)) %>%
+  mutate(
+    y = -(1:n()) %/% 30,   # Permet de positionner le cercle dans un tableau invisible
+    x = 0:(n()-1) %%  30  
+  ) %>% 
+  # (-) 1 2 3 4 5 6 7 8 9 10 .................. n()
+  #     0 1 2 3 4 5 6 7 8 9  .................. n()-1
+  # y(-)0 0 0 0 0 0 0 0 0 0 ... 1  .... 2
+  # x   0 1 2 3 4 5 6 7 8 9 .29 0 ...29 0 
+  
+  # graphique (cœur)
+  ggplot(aes(y=y, x=x, label=id_anc, size=population)) +
+  geom_point(shape=21) +
+  geom_point(
+    data = . %>% filter(id_anc %in% c('ITC1', 'ITH3')), # on colorie ces points
+    shape=21, # forme 
+    fill='red',
+    show.legend = FALSE  # pas de légende
+  ) +
+  geom_text(size=1.5) +
+  # graphique (mise en page)
+  scale_y_discrete(name=NULL, breaks=NULL)+
+  scale_x_continuous(name=NULL, breaks = NULL ) +
+  scale_radius(labels=scales:::number, range=c(1,10) ) +
+  theme_minimal() +
+  coord_equal() + # échelle identique
+  labs(
+    size     = "Population",
+    title    = "Disparité des maillages administratifs en Europe",
+    subtitle = 'Population des régions NUTS 2 (2015)',
+    caption  = "Source: Eurostat"
+  )
+```
+### 3.1 Formes
+
+Les graphiques en pictogrammes sont très populaires en _marketing_ et en _reporting_. Il s'agit d'une utilisation pure de la forme d'un marqueur. (En réalité, ça n'a pas vraiment de sens de représenter une série de données catégorielles prise en isolation, puisqu'il est plus efficace de se ramener au cas continu en comptant – tout simplement! – le nombre d'observations dans chaque catégorie.)
+
+```{r, echo=FALSE}
+install.packages("ggimage")
+library(ggimage)
+NUTS2_year %>%
+  filter(année==2015) %>%
+  select(population_0_19, population_20_59, population_60_plus) %>%
+  summarise_all(sum, na.rm=TRUE) %>%
+  gather(tranche, population) %>%
+  mutate(population100 = round(100 * population / sum(population))) %>%
+  group_by(tranche) %>% expand(id=seq(to=population100)) %>% ungroup %>%
+  mutate(x=rep(1:10, times=10)
+         , y=rep(10:1, each=10)) %>%
+  ggplot(aes(x=x, y=y)) +
+  geom_image(aes(
+    image = str_c('img/', tranche, '.png')
+  )) +
+  coord_equal() +
+  theme_void() +
+  labs(
+    title    = "20% de jeunes, 20% de vieux",
+    subtitle = "Âge des Européen-ne-s en 2015 (0-19 ans, 20-59, plus de 60 ans)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
+```{r}
+library(emojifont)
+library(ggimage)
+NUTS2_year %>%
+  filter(année==2015) %>%
+  select(population_0_19, population_20_59, population_60_plus) %>%
+  summarise_all(sum, na.rm=TRUE) %>%
+  gather(tranche, population) %>%
+  mutate(population100 = round(100 * population / sum(population))) %>%
+  group_by(tranche) %>% expand(id=seq(to=population100)) %>% ungroup %>%
+  mutate(x=rep(1:10, times=10), y=rep(10:1, each=10)) %>%
+  # ------------------------------------- solution 1: avec shape et geom_point
+  # ggplot(aes(x=x, y=y)) +
+  # geom_point(aes(shape=tranche)) +
+  # ---------------------------------------------- solution 2: avec des images
+  # Il faut télécharger les image manuellement et leur donner le bon nom!
+  # ggplot(aes(x=x, y=y)) +
+  # geom_image(aes(
+  #   image = str_c('img/', tranche, '.png')
+  # )) +
+  # ---------------------------------------------- solution 3: avec des emojis
+  ggplot(aes(x=x, y=y)) +
+  geom_text(aes(
+    label = tranche %>% fct_recode(
+      'girl'='population_0_19',
+      'woman' = 'population_20_59',
+      'older_woman' = 'population_60_plus'
+    ) %>% emoji
+  ), family='EmojiOne') +
+  coord_equal() +
+  theme_void() +
+  labs(
+    title    = "20% de jeunes, 20% de vieux",
+    subtitle = "Âge des Européens en 2015 (0-19 ans, 20-59, plus de 60 ans)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+```{r}
+library(reshape2)
+data <-t(NUTS2_year %>%
+  filter(année==2015) %>%
+  select(population_0_19, population_20_59, population_60_plus) %>%
+  summarize(population_0_19_tot = sum(population_0_19),
+            population_20_59_tot = sum(population_20_59),
+            population_60_plus_tot = sum(population_60_plus)))
+
+colnames(data) <- "population"
+
+data <- melt(data,"tranche")
+
+
+```
+
+```{r}
+library(reshape2)
+data <- t(NUTS2_year %>%
+  filter(année==2015) %>%
+  select(population_0_19, population_20_59, population_60_plus) %>%
+  summarize(population_0_19_tot = sum(population_0_19),
+            population_20_59_tot = sum(population_20_59),
+            population_60_plus_tot = sum(population_60_plus)))
+
+colnames(data) <- "population"
+data <- melt(data,"tranche")
+
+
+data%>%
+  ggplot(aes(x=tranche, y=value)) +
+  geom_col() +
+  theme_minimal() +
+  
+  labs(
+    title    = "20% de jeunes, 20% de vieux",
+    subtitle = "Âge des Européens en 2015 (0-19 ans, 20-59, plus de 60 ans)",
+    caption  = "Source: Eurostat (niveau NUTS 2)"
+  )
+```
+
