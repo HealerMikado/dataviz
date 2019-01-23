@@ -49,7 +49,8 @@ Rien n'est objectif dans ce monde, ne vous pensez pas au dessus de tout le monde
 Nous travaillerons avec des données Eurostat, principalement des données de population au niveau NUTS 2 (le découpage officiel statistique européeen, qui possède 3 niveaux). Le tableau de données `NUTS2_year` possède une ligne par région NUTS 2 et par année d'observation:
 
 ```{r, eval=FALSE}
-
+install.packages("tidyverse")
+library(tidyverse)
 load('data/NUTS2_year.RData')
 NUTS2_year
 ```
