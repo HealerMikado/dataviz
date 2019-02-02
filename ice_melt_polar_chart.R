@@ -36,7 +36,7 @@ bridges$mois <- NA    # On met la valeur de mois à NA pour ensuite la virer
 
 ggplot(rbind(ice_melt_clean, bridges), aes(mois, value,group=année, color=année)) + 
   geom_line() + # on fait un diagramme basique en ligne
-  geom_line(. %>% filter (année ==2018), color="red") +
+  geom_line(data = . %>% filter (année ==2018), color="red") +
   scale_x_discrete(expand = c(0,0), breaks = month.abb, name=NULL) + # On ferme les trous et on redéfini les labels pour ne pas avoir NA
   scale_y_continuous(name="Volume de glace (10³km³)") + 
   coord_polar(theta = "x",start=-pi*1/12) + # On fait un diagramme en coordonnées polaire et la magie s'opère <3
@@ -48,7 +48,8 @@ ggplot(rbind(ice_melt_clean, bridges), aes(mois, value,group=année, color=anné
     mois=last(mois),
     value=last(value)
     ) %>% filter(annéeGroup == 2018), aes(label=année),
-    nudge_y=-5.5) +
+    nudge_y=-5.5,
+    color="red") +
   theme_minimal()+
   labs(
     title    = "La spirale infernale de la fonte des glaces",
