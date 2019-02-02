@@ -7,7 +7,7 @@ ice_melt<- read.table("data/ice_melt.txt", quote="\"", comment.char="")
 colnames(ice_melt) <- c("année",  "janvier", "fevrier", "mars", "avril", "juin","mai", "juillet", "août", "septembre", "octobre", "novembre", "décembre")
 
 #Besoin de modifier les données pour faire le graph. On va faire une table avec comme colonne, mois, année, valeur de glace
-ice_melt_clean<- data.frame("mois" = rep(c("Jan", "Feb", "Mar", "Apr", "May","Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),39)
+ice_melt_clean<- data.frame("mois" = rep(c("Jan", "Feb", "Mar", "Apr", "May","Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),40)
                 , "value"=0
                 , "année" = 0)
 
@@ -19,7 +19,7 @@ ice_melt_clean$mois = factor(ice_melt_clean$mois, levels = month.abb)
 valeursFinales <-c()
 année <-c()
 
-for (i in 1:39) {
+for (i in 1:40) {
   valeursFinales <- c(valeursFinales,as.numeric(ice_melt2 [i,]))
   année <- c(année, rep(1978+i, 12))
 }
@@ -34,12 +34,21 @@ bridges$année <- bridges$année - 1    # On décale pour mettre ça à l'année
 bridges$mois <- NA    # On met la valeur de mois à NA pour ensuite la virer
 
 
-ggplot(rbind(x, bridges), aes(mois, value,group=année, color=année)) + 
+ggplot(rbind(ice_melt_clean, bridges), aes(mois, value,group=année, color=année)) + 
   geom_line() + # on fait un diagramme basique en ligne
+  geom_line(. %>% filter (année ==2018), color="red") +
   scale_x_discrete(expand = c(0,0), breaks = month.abb, name=NULL) + # On ferme les trous et on redéfini les labels pour ne pas avoir NA
   scale_y_continuous(name="Volume de glace (10³km³)") + 
   coord_polar(theta = "x",start=-pi*1/12) + # On fait un diagramme en coordonnées polaire et la magie s'opère <3
-  scale_color_continuous(name=NULL) + 
+  scale_color_continuous(name="Année") + 
+  geom_text(data = . %>% filter(row_number()==1 ), aes(label=année),
+            nudge_y=2) +
+  geom_text(data = . %>% group_by(année) %>% summarise(
+    annéeGroup=last(année),
+    mois=last(mois),
+    value=last(value)
+    ) %>% filter(annéeGroup == 2018), aes(label=année),
+    nudge_y=-5.5) +
   theme_minimal()+
   labs(
     title    = "La spirale infernale de la fonte des glaces",
