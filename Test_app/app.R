@@ -82,42 +82,36 @@ server <- function(input, output) {
 ##############################################
   #graph
   ranges <- reactiveValues(x = NULL, y = NULL)
+  
+  core_plot <- reactive({
+    req(input$year)
+    NUTS2_year %>% filter(année == input$year) %>%
+      ggplot(aes_string(x=input$xAxis, y=input$yAxis)) +
+      coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)+
+      scale_x_continuous(name = NULL, labels = scales:::number) +
+      scale_y_continuous(name = NULL, labels = scales:::number)+
+      guides(color="none") 
+  }
+  )
+  
   output$plot <- renderPlot({
     validate(
       need(input$year >= minYear, paste("L'année doit être supérieure à " ,minYear)),
       need(input$year <= maxYear,  paste("L'année doit être inférieure à " , minYear))
     )
     if ( input$color == "pays") {
-      NUTS2_year %>% filter(année == input$year) %>%
-        ggplot(aes_string(x=input$xAxis, y=input$yAxis)) +
-        geom_point(aes(color=str_sub(id_anc, end=2))) +
-        coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)+
-        scale_x_continuous(name = NULL, labels = scales:::number) +
-        scale_y_continuous(name = NULL, labels = scales:::number)+
-        guides(color="none") 
+      core_plot() +
+        geom_point(aes(color=str_sub(id_anc, end=2))) 
       
     } else if ( input$color == "heatmap") {
-      NUTS2_year %>% filter(année == input$year) %>%
-        ggplot(aes_string(x=input$xAxis, y=input$yAxis)) +
+      core_plot() +
         geom_bin2d() +
-        scale_x_continuous(
-          labels = scales:::number
-        ) +
-        scale_y_continuous(
-          labels = scales:::number
-        ) +
-        scale_fill_gradient(low='#56b1f7', high='black') +
-        coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)+
-        scale_x_continuous(name = NULL, labels = scales:::number) +
-        scale_y_continuous(name = NULL, labels = scales:::number) 
-      
+        scale_fill_gradient(low='#56b1f7', high='black') 
+
     } else if  ( input$color == "none") {
-      NUTS2_year %>% filter(année == input$year) %>%
-        ggplot(aes_string(x=input$xAxis, y=input$yAxis)) +
-        geom_point() +
-        coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)+
-        scale_x_continuous(name = NULL, labels = scales:::number) +
-        scale_y_continuous(name = NULL, labels = scales:::number) 
+      core_plot() +
+        geom_point() 
+
       
     }
   })
@@ -141,6 +135,7 @@ server <- function(input, output) {
       brushedPoints(input$plot_brush) %>% 
       select(id_anc, nom_anc, population, superficie)
   })
+}
 
 
 # Run the application 
