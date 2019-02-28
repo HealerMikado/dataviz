@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Dataviz</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/mine.css">
+	<link rel="stylesheet" href="css/theme/black.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css'
+			: 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h1>Visualisation des données</h1>
+				<h2>Dataviz sur le web</h2>
+			</section>
+
+			<section>
+				<section>
+					<h2>Généralités</h2>
+				</section>
+
+				<section>
+					<h3>Généralités</h3>
+					<p>Une page web c'est</p>
+					<ul>
+						<li>Du html : contenu</li>
+						<li>Du css : présentation</li>
+						<li>Du javascript : intéractivité</li>
+					</ul>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h2>Hypertext Markup Language</h2>
+				</section>
+
+				<section>
+					<h3>HTML</h3>
+					<ul>
+						<li>Langage avec balise</li>
+						<li>Structure des données</li>
+						<li>Sémantique des données</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Sémantique</h3>
+					<p>Les balises ont un sens</p>
+					<ul>
+						<li>h1-h6 pour des titres</li>
+						<li>p pour un paragraphe</li>
+						<li>imh pour une image</li>
+						<li>a pour un lien</li>
+						<li>...</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Sémantique</h3>
+					<p>Depuis la norme HTML 5 encore plus de balises</p>
+					<ul>
+						<li>section</li>
+						<li>article</li>
+						<li>header</li>
+						<li>footer</li>
+						<li>...</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Structure</h3>
+					<p>Possibilité de les inclures les unes dans les autres</p>
+					<p>La hiérarcie des balises s'appelle le DOM (Document object model)</p>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h2>Cascade Style Sheet</h2>
+				</section>
+
+				<section>
+					<h3>CSS</h3>
+					<ul>
+						<li>Langage d'apparence</li>
+						<li>Selecteurs (HTML)</li>
+						<li>Style</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Les selecteurs</h3>
+					<ul>
+						<li>Balise HTML</li>
+						<li>Classe</li>
+						<li>Id</li>
+						<li>On peut les additionner</li>
+						<li>Hiérachisation des selecteurs</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Les styles</h3>
+					<p>Il y en a beaucoup trop, google est votre ami !</p>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h1>Javascript</h1>
+				</section>
+				<section>
+					<h3>JS</h3>
+					<ul>
+						<li>Vieux (Netscape 1996)</li>
+						<li>Mais revient à la mode</li>
+						<li>Multiparadigme (objet, événementiel, fonctionnel)</li>
+						<li>Très/trop permicif</li>
+						<li>A la base côté client, mais rien n'empêche côté serveur</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Les variables</h3>
+					<ul>
+						<li>rien : automatiquement globale</li>
+						<li>var : visible dans la fonction</li>
+						<li>let : visible dans le bloc (exemple if, for ...)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Les fonction</h3>
+					<ul>
+						<li>function déclaraion function : cas classique</li>
+						<li>function expression</li>
+						<li>=> : lambda expression, fonction accélérée</li>
+					</ul>
+				</section>
+
+			</section>
+
+		</div>
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			dependencies: [{
+				src: 'plugin/markdown/marked.js'
+			}, {
+				src: 'plugin/markdown/markdown.js'
+			}, {
+				src: 'plugin/notes/notes.js',
+				async: true
+			}, {
+				src: 'plugin/highlight/highlight.js',
+				async: true,
+				callback: function () {
+					hljs.initHighlightingOnLoad();
+				}
+			}],
+			// Display the page number of the current slide
+			slideNumber: true,
+
+			// Push each slide change to the browser history
+			history: true,
+
+			// Enable slide navigation via mouse wheel
+			mouseWheel: true,
+		});
+	</script>
+</body>
+
+</html>
