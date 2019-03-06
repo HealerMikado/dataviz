@@ -1,66 +1,53 @@
 #sidebar {
-    float: left;
-    width: 30%;
-    height: 300px;
-  }
-  
-  #content {
-    float: left;
-    width: 70%;
-    height: 450px;
-  }
-  
-  #graphic {
-    width: 100%;
-    height: 100%;
-  }
-  
-  a {
-    color: grey;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  a:hover {
-    color: #2ea297;
-  }
-  
-  a:visited {
-    color: #93380d;
-  }
-  
-  button:hover {
-    color: grey;
-  }
-  
-  button,
-  select {
-    width: 95%;
-  }
-  
-  footer {
-    font-size: 80%;
-  }
-  
-  /* circle {
-      fill: indigo;
-  }
-   */
+  float: left;
+  width: 30%;
+  height: 400px;
+}
 
-   circle.selected{
-       stroke-width: 3;
-       stroke : darkgreen;
-       fill: green;
-   }
+#sidebar{
+  padding-top: 20px;
+}
 
-   .text{
-    opacity: 0;
-    transition-property: opacity;
-    transition-duration: 1s;
-   }
+#sidebar label{
+  font-size: 14px;
+  font-family: sans-serif;
+}
 
-   .text:hover{
-    opacity: 1;
-    transition-property: opacity;
-    transition-duration: 1s;
-   }
+button, select, input{
+  width: 90%;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+button:hover {
+  /* Il n'est pas possible de changer le style d'un objet "select" avec :hover... */
+  font-weight: bold;
+}
+
+#content {
+  float: left;
+  width: 70%;
+  height: 400px;
+}
+
+#content svg{
+  width: 100%;
+  height: 100%;
+}
+
+circle{
+  cursor: pointer;
+  fill-opacity: 0;
+  stroke-width: 2;
+  r: 5;
+}
+
+circle.selected, circle:hover{
+  stroke-width: 3;
+}
+circle.selected{
+  fill-opacity: 1;
+}
+circle.selected + text, circle:hover + text{
+  font-weight: bold;
+}
