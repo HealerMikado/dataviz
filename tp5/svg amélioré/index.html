@@ -1,0 +1,37 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Gap Minder</title>
+      <link rel="stylesheet" type="text/css"  href="style.css">
+  </head>
+  <body>
+    <div id="container">
+        <header>
+          <h1>Gap Minder</h1>
+        </header>
+        <div id="sidebar">
+          <button id="reinitialize">Réinitialiser</button><br><br>
+          <button id="random">Graphique aléatoire</button><br><br>
+          <label for="y-axis">Ordonnées:</label>
+          <select id="y-axis">
+            <option value="">Espérance de vie</option>
+            <option value="">Émissions de CO₂</option>
+          </select><br><br>
+          <label for="year">Années:</label>
+          <input id="year" type="range" min="1900" max="2018">
+        </div>
+        <div id="content">
+        </div>
+        <footer>
+          <p><span class="citation">Rosling a fondé la Fondation Gapminder avec son fils Ola Rosling et sa belle-fille Anna Rosling Rönnlund. Gapminder a développé un logiciel (Trendalyzer) qui converti les statistiques internationales en graphiques animés et interactifs. Ses conférences utilisant Trendalyzer pour visualiser le développement mondial ont été couronnées par de nombreuses récompenses. Les animations interactives sont disponibles gratuitement sur le site de la Fondation.</span>      <span class="source">Source: <a href="https://fr.wikipedia.org/wiki/Hans_Rosling">Wikipédia</a></span>)</p>
+        </footer>
+      </div>
+      
+      <script type="text/javascript" src="js.js"></script>
+
+  </body>
+  </html>

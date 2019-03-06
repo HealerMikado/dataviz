@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css"  href="style.css">
+
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>Gap Minder</h1>
+    </header>
+    <div id="sidebar">
+      <button id="reinitialize">Réinitialiser</button><br><br>
+      <button id="random">Graphique aléatoire</button><br><br>
+      <label for="y-axis">Ordonnées:</label>
+      <select id="y-axis">
+        <option value="">Espérance de vie</option>
+        <option value="">Émissions de CO₂</option>
+      </select><br><br>
+      <label for="year">Années:</label>
+      <input id="year" type="range" min="1900" max="2018">
+    </div>
+    <div id="content">
+      <svg id="graphic">
+        <circle cx="90" cy="80" r="50" fill="blue" />
+        <circle cx="100" cy="40" r="10" stroke="orange" stroke-width="4" />
+        <circle cx="150" cy="100" r="40" stroke="purple" stroke-width="10" />
+        <circle cx="110" cy="200" r="90" opacity="0.5" />
+        <circle cx="50" cy="80" r="20" />
+        <circle cx="60" cy="300" r="30" />
+        <g>
+          <text x="60" y="30" fill="red" transform="rotate(45 30,50)" class="text">Une tendance claire</text>
+          <line x1="0" y1="0" x2="300" y2="300" style="stroke:red;stroke-width:2" />
+        </g>
+      </svg>
+    </div>
+    <footer>
+      <p><span class="citation">Rosling a fondé la Fondation Gapminder avec son fils Ola Rosling et sa belle-fille Anna
+          Rosling Rönnlund. Gapminder a développé un logiciel (Trendalyzer) qui converti les statistiques
+          internationales en graphiques animés et interactifs. Ses conférences utilisant Trendalyzer pour visualiser le
+          développement mondial ont été couronnées par de nombreuses récompenses. Les animations interactives sont
+          disponibles gratuitement sur le site de la Fondation.</span> <span class="source">Source: <a
+            href="https://fr.wikipedia.org/wiki/Hans_Rosling">Wikipédia</a></span>)</p>
+    </footer>
+  </div>
+
+
+  <script type="text/javascript" src="js.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</body>
+
+</html>
