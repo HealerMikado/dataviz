@@ -72,23 +72,41 @@ document.getElementById("content").appendChild(svg);
 
 /* Question 7 */
 
-for(let i=0;i<countries.length;i++){
+// for(let i=0;i<countries.length;i++){
   
+//   let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+//   let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+//   let text   = document.createElementNS("http://www.w3.org/2000/svg", "text");
+//   circle.setAttribute('cx',     countries[i].x);
+//   circle.setAttribute('cy',     countries[i].y);
+//   circle.setAttribute('fill',   countries[i].color);
+//   circle.setAttribute('stroke', countries[i].color);
+//   text.textContent =            countries[i].text;
+//   text.setAttribute('x',        countries[i].x+10);
+//   text.setAttribute('y',        countries[i].y+5);
+//   text.setAttribute('fill',     countries[i].color);
+//   svg.appendChild(group);
+//   group.appendChild(circle);
+//   group.appendChild(text);
+// } 
+
+countries.forEach(countrie => {
   let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
   let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
   let text   = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  circle.setAttribute('cx',     countries[i].x);
-  circle.setAttribute('cy',     countries[i].y);
-  circle.setAttribute('fill',   countries[i].color);
-  circle.setAttribute('stroke', countries[i].color);
-  text.textContent =            countries[i].text;
-  text.setAttribute('x',        countries[i].x+10);
-  text.setAttribute('y',        countries[i].y+5);
-  text.setAttribute('fill',     countries[i].color);
+  circle.setAttribute('cx',     countrie.x);
+  circle.setAttribute('cy',     countrie.y);
+  circle.setAttribute('fill',   countrie.color);
+  circle.setAttribute('stroke', countrie.color);
+  text.textContent =            countrie.text;
+  text.setAttribute('x',        countrie.x+10);
+  text.setAttribute('y',        countrie.y+5);
+  text.setAttribute('fill',     countrie.color);
   svg.appendChild(group);
   group.appendChild(circle);
   group.appendChild(text);
-} 
+}
+)
 
 // Actions
 function toggle_circle() {

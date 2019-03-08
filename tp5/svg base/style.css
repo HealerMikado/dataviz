@@ -42,10 +42,10 @@
     font-size: 80%;
   }
   
-  /* circle {
+  circle {
       fill: indigo;
   }
-   */
+  
 
    circle.selected{
        stroke-width: 3;
@@ -59,7 +59,7 @@
     transition-duration: 1s;
    }
 
-   .text:hover{
+    line:hover + text{
     opacity: 1;
     transition-property: opacity;
     transition-duration: 1s;

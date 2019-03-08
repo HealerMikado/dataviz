@@ -1,0 +1,1 @@
+cercle.classList.toggle("selected")
