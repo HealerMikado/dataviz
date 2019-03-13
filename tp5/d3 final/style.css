@@ -1,0 +1,48 @@
+#sidebar {
+  height: 400px;
+}
+
+#sidebar{
+  padding-top: 20px;
+}
+
+#sidebar label{
+  font-size: 14px;
+  font-family: sans-serif;
+}
+
+button, select, input{
+  width: 90%;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+button:hover {
+  /* Il n'est pas possible de changer le style d'un objet "select" avec :hover... */
+  font-weight: bold;
+}
+
+#content {
+  height: 400px;
+}
+
+#content svg{
+  width: 100%;
+  height: 100%;
+}
+
+circle{
+  cursor: pointer;
+  fill-opacity: 0.5;
+  stroke-width: 2;
+}
+
+circle.selected, circle:hover{
+  stroke-width: 3;
+}
+circle.selected{
+  fill-opacity: 1;
+}
+circle.selected + text, circle:hover + text{
+  font-weight: bold;
+}

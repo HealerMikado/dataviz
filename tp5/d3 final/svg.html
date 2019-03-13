@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Gap Minder</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="container-fluid">
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <a class="navbar-brand" href="#">Gap Minder</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Features 1</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Features 2</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled" href="#">Features 3</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+
+    <div class="row mt-3">
+      <div class="col-md-4">
+
+        <div class="card bg-light h-100">
+          <div class="card-body">
+            <button id="reinitialize">Réinitialiser</button><br><br>
+            <button id="random">Graphique aléatoire</button><br><br>
+            <label for="y-axis">Ordonnées:</label>
+            <select id="y-axis">
+              <option value="">Espérance de vie</option>
+              <option value="">Émissions de CO₂</option>
+            </select><br><br>
+            <label for="year">Années:</label>
+            <input id="year" type="range" min="1900" max="2018">
+          </div>
+
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="card bg-light h-100">
+          <div class="card-body">
+            <div id="content">
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <footer>
+      <div class="row mt-2">
+        <div class="col-md">
+
+          <p><span class="citation">Rosling a fondé la Fondation Gapminder avec son fils Ola Rosling et sa
+              belle-fille
+              Anna
+              Rosling Rönnlund. Gapminder a développé un logiciel (Trendalyzer) qui converti les statistiques
+              internationales
+              en graphiques animés et interactifs. Ses conférences utilisant Trendalyzer pour visualiser le
+              développement
+              mondial ont été couronnées par de nombreuses récompenses. Les animations interactives sont disponibles
+              gratuitement sur le site de la Fondation.</span> <span class="source">Source: <a
+                href="https://fr.wikipedia.org/wiki/Hans_Rosling">Wikipédia</a></span>)</p>
+
+
+        </div>
+      </div>
+
+    </footer>
+  </div>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.1/d3.js"></script>
+
+  <script type="text/javascript" src="js.js"></script>
+
+</body>
+
+</html>
